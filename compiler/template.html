@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Event Schema Viewer and Validator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.0/jsoneditor.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.0/jsoneditor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/6.12.6/ajv.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="header">
+        <h1 class="logo">Event Schema Viewer and Validator</h1>
+        <button id="themeToggle" class="theme-toggle">Dark Mode</button>
+    </div>
+    <ul class="json-file-list" id="directory-structure">
+        {content}
+    </ul>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <div class="editors">
+                <div id="schema-viewer"></div>
+                <div id="json-editor"></div>
+            </div>
+            <div id="validation-result"></div>
+        </div>
+    </div>
+
+    <script>
+        let schemaViewer, jsonEditor, currentSchema, validate, ajv;
+
+        function initEditors() {
+            schemaViewer = new JSONEditor(document.getElementById('schema-viewer'), { mode: 'view' });
+            jsonEditor = new JSONEditor(document.getElementById('json-editor'), {
+                mode: 'code',
+                onChange: validateJSON,
+
+            });
+        }
+
+        function displaySchema(schema, example) {
+            currentSchema = JSON.parse(schema);
+            schemaViewer.set(currentSchema);
+            jsonEditor.set(JSON.parse(example));
+            ajv = new Ajv();
+            validate = ajv.compile(currentSchema);
+
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        document.querySelectorAll('.json-file').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!schemaViewer) initEditors();
+                displaySchema(e.target.getAttribute('data-content'),e.target.getAttribute('data-example'));
+            });
+        });
+
+        function validateJSON() {
+            try {
+                const json = jsonEditor.get();
+                const valid = validate(json);
+                const resultElement = document.getElementById('validation-result');
+                resultElement.textContent = valid ? 'Valid!' : 'Invalid: ' + ajv.errorsText(validate.errors);
+                resultElement.className = valid ? 'valid' : 'invalid';
+            } catch (error) {
+                const resultElement = document.getElementById('validation-result');
+                resultElement.textContent = 'Invalid JSON: ' + error.message;
+                resultElement.className = 'invalid';
+            }
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+
+            // Update button text
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        }
+
+
+
+
+        // Check for saved theme preference or default to light mode
+        const savedTheme = localStorage.getItem('darkMode');
+
+        if (savedTheme === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggle').textContent = 'Light Mode';
+        }
+
+        // Add event listener to theme toggle button
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+:root {
+    /* Light mode variables */
+    --light-bg-color: #f4f4f4;
+    --light-text-color: #333;
+    --light-header-bg: white;
+    --light-card-bg: #fff;
+    --light-card-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    --light-card-hover-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --light-link-color: #3498db;
+
+    /* Dark mode variables */
+    --dark-bg-color: #1a1a1a;
+    --dark-text-color: #e0e0e0;
+    --dark-header-bg: #2c2c2c;
+    --dark-card-bg: #333333;
+    --dark-card-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    --dark-card-hover-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    --dark-link-color: #63b3ed;
+
+    /* Default to light mode */
+    --bg-color: var(--light-bg-color);
+    --text-color: var(--light-text-color);
+    --header-bg: var(--light-header-bg);
+    --card-bg: var(--light-card-bg);
+    --card-shadow: var(--light-card-shadow);
+    --card-hover-shadow: var(--light-card-hover-shadow);
+    --link-color: var(--light-link-color);
+
+    /* Other variables */
+    --header-height: 60px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    background-color: var(--bg-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.header {
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--text-color);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color var(--transition-speed);
+    border-left: 4px solid var(--link-color);
+    padding-left: 4px;
+    margin: 0; /* Remove default margin */
+}
+
+.theme-toggle {
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+
+.json-file-list {
+    list-style-type: none;
+    padding: 0;
+    padding-left: 8px;
+}
+
+.json-file-list ul {
+    padding: 0;
+}
+
+.json-file-list li {
+    /* background-color: var(--card-bg); */
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    list-style: none;
+    border: 1px solid #555;
+}
+
+.json-file-list li:hover {
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+}
+
+.json-file {
+    cursor: pointer;
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.jsoneditor-poweredBy {
+    display: none;
+}
+
+.popup {
+    display: none;
+    backdrop-filter: blur(3px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.popup-content {
+    background-color: var(--card-bg);
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.editors {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+#schema-viewer, #json-editor {
+    height: 300px;
+    width: 48%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+#validation-result {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.valid {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.invalid {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.close {
+    align-self: flex-end;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    --bg-color: var(--dark-bg-color);
+    --text-color: var(--dark-text-color);
+    --header-bg: var(--dark-header-bg);
+    --card-bg: var(--dark-card-bg);
+    --card-shadow: var(--dark-card-shadow);
+    --card-hover-shadow: var(--dark-card-hover-shadow);
+    --link-color: var(--dark-link-color);
+}
+
+body.dark-mode .valid {
+    background-color: #1e4620;
+    color: #4caf50;
+}
+
+body.dark-mode .invalid {
+    background-color: #4a1e1e;
+    color: #f44336;
+}
+
+/* Adjust JSON editor styles for dark mode */
+body.dark-mode .jsoneditor {
+    border-color: #444;
+}
+
+body.dark-mode .jsoneditor-menu {
+    background-color: #333;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .jsoneditor-search input {
+    background-color: #222;
+    color: var(--text-color);
+}
+
+body.dark-mode .jsoneditor-frame,
+body.dark-mode .jsoneditor-search div {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.theme-toggle:hover {
+    opacity: 0.9;
+}
