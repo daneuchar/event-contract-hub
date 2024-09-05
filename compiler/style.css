@@ -62,20 +62,20 @@ body {
 }
 
 .theme-toggle {
-    background-color: transparent;
-    color: var(--text-color);
-    border: none;
-    padding: 8px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .theme-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 
@@ -220,19 +220,4 @@ body.dark-mode .jsoneditor-frame,
 body.dark-mode .jsoneditor-search div {
     background-color: var(--bg-color);
     color: var(--text-color);
-}
-
-/* Theme toggle button */
-.theme-toggle {
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
-}
-
-.theme-toggle:hover {
-    opacity: 0.9;
 }
