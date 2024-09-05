@@ -8,7 +8,7 @@ class JsonFile:
     name: str
     content: str
     example: Optional[str] = None
-
+    error: Optional[str] = None
 @dataclass
 class Subcategory:
     name: str
@@ -20,27 +20,39 @@ class DirectoryContent:
     subcategories: List[Subcategory]
 
 def read_json_file(file_path: str) -> dict:
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        return {"error": f"Invalid JSON: {str(e)}"}
+    except FileNotFoundError:
+        return {"error": "File not found"}
+    except Exception as e:
+        return {"error": f"Unexpected error: {str(e)}"}
 
 def get_example_content(example_path: str) -> str:
-    try:
-        return json.dumps(read_json_file(example_path))
-    except FileNotFoundError:
+    content = read_json_file(example_path)
+    if "error" in content:
         return "{}"
+    return json.dumps(content)
 
 def process_json_file(file_path: str, example_path: str) -> JsonFile:
-    try:
-        content = json.dumps(read_json_file(file_path))
-        example = get_example_content(example_path)
+    content = read_json_file(file_path)
+    example = get_example_content(example_path)
+
+    if "error" in content:
         return JsonFile(
             name=os.path.basename(file_path),
-            content=content,
-            example=example
+            content="{}",
+            example=example,
+            error=content["error"]
         )
-    except json.JSONDecodeError:
-        print(f"Error: Invalid JSON in {file_path}")
-        return None
+
+    return JsonFile(
+        name=os.path.basename(file_path),
+        content=json.dumps(content),
+        example=example
+    )
 
 def get_json_files(directory: str) -> List[JsonFile]:
     json_files = []
@@ -49,24 +61,32 @@ def get_json_files(directory: str) -> List[JsonFile]:
             file_path = os.path.join(directory, filename)
             example_path = os.path.join(directory, 'examples', filename)
             json_file = process_json_file(file_path, example_path)
-            if json_file:
-                json_files.append(json_file)
+            json_files.append(json_file)
     return json_files
+
+def is_valid_directory(name: str) -> bool:
+    return name not in ('examples', 'schema-compiler')
+
+def get_subcategory(dirpath: str, subcategory: str) -> Optional[Subcategory]:
+    subcat_path = os.path.join(dirpath, subcategory)
+    if os.path.isdir(subcat_path):
+        json_files = get_json_files(subcat_path)
+        if json_files:
+            return Subcategory(subcategory, json_files)
+    return None
 
 def get_directory_contents(root_dir: str) -> List[DirectoryContent]:
     contents = []
     for dirpath, dirnames, _ in os.walk(root_dir):
-        dirnames[:] = [d for d in dirnames if d not in ('examples', 'schema-compiler')]
+        dirnames[:] = [d for d in dirnames if is_valid_directory(d)]
         if dirpath != root_dir:
             rel_path = os.path.relpath(dirpath, root_dir)
             subcategories = []
 
             for subcategory in ['In Topic', 'Out Topic']:
-                subcat_path = os.path.join(dirpath, subcategory)
-                if os.path.isdir(subcat_path):
-                    json_files = get_json_files(subcat_path)
-                    if json_files:
-                        subcategories.append(Subcategory(subcategory, json_files))
+                subcat = get_subcategory(dirpath, subcategory)
+                if subcat:
+                    subcategories.append(subcat)
 
             if subcategories:
                 contents.append(DirectoryContent(rel_path, subcategories))
