@@ -61,7 +61,7 @@ def get_directory_contents(root_dir: str) -> List[DirectoryContent]:
             rel_path = os.path.relpath(dirpath, root_dir)
             subcategories = []
 
-            for subcategory in ['in topic', 'out topic']:
+            for subcategory in ['In Topic', 'Out Topic']:
                 subcat_path = os.path.join(dirpath, subcategory)
                 if os.path.isdir(subcat_path):
                     json_files = get_json_files(subcat_path)
